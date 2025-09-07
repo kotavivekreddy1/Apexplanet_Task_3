@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced Styling & JavaScript Task</title>
+  <style>
+    /* ---------- Global Styles ---------- */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+
+      /* 🔹 Background image */
+      background: url("https://picsum.photos/1920/1080?blur=2") no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+    }
+    header {
+      background: rgba(0, 119, 182, 0.85);
+      color: #fff;
+      padding: 20px;
+    }
+    h1 {
+      margin: 0;
+    }
+
+    /* ---------- Carousel Styles ---------- */
+    .carousel {
+      position: relative;
+      max-width: 500px;
+      margin: 20px auto;
+      overflow: hidden;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      background: #fff;
+    }
+    .carousel img {
+      width: 100%;
+      display: none;
+    }
+    .carousel img.active {
+      display: block;
+    }
+    .controls {
+      margin-top: 10px;
+    }
+    button {
+      background: #0077b6;
+      color: #fff;
+      border: none;
+      padding: 10px 15px;
+      margin: 5px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #023e8a;
+    }
+
+    /* ---------- Quiz Section ---------- */
+    .quiz-section {
+      background: rgba(255, 255, 255, 0.9);
+      color: #000;
+      max-width: 500px;
+      margin: 30px auto;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      text-align: left;
+    }
+    .quiz-section h2 {
+      text-align: center;
+    }
+    .quiz-question {
+      margin: 15px 0;
+    }
+    #quiz-result {
+      font-weight: bold;
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    /* ---------- API Section ---------- */
+    .api-section {
+      background: rgba(255, 255, 255, 0.9);
+      color: #000;
+      margin: 30px auto;
+      max-width: 500px;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    /* ---------- Responsive Design ---------- */
+    @media (max-width: 768px) {
+      header {
+        font-size: 18px;
+      }
+      button {
+        padding: 8px 12px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      header {
+        font-size: 16px;
+        padding: 10px;
+      }
+      .carousel {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Advanced Styling & JavaScript</h1>
+    <p>Responsive Design | Image Carousel | Quiz | API Fetch</p>
+  </header>
+
+  <!-- ---------- Image Carousel ---------- -->
+  <section>
+    <h2>Image Carousel</h2>
+    <div class="carousel">
+      <img src="https://picsum.photos/id/1015/500/300" class="active" alt="Image 1">
+      <img src="https://picsum.photos/id/1016/500/300" alt="Image 2">
+      <img src="https://picsum.photos/id/1018/500/300" alt="Image 3">
+    </div>
+    <div class="controls">
+      <button onclick="prevImage()">Previous</button>
+      <button onclick="nextImage()">Next</button>
+    </div>
+  </section>
+
+  <!-- ---------- Quiz Section ---------- -->
+  <section class="quiz-section">
+    <h2>Interactive Quiz</h2>
+    <div id="quiz"></div>
+    <button onclick="submitQuiz()">Submit Quiz</button>
+    <p id="quiz-result"></p>
+  </section>
+
+  <!-- ---------- API Data Fetch ---------- -->
+  <section class="api-section">
+    <h2>Random Joke (API Fetch)</h2>
+    <p id="joke">Click the button to load a joke!</p>
+    <button onclick="getJoke()">Get Joke</button>
+  </section>
+
+  <script>
+    /* ---------- Image Carousel JS ---------- */
+    let currentIndex = 0;
+    const images = document.querySelectorAll('.carousel img');
+
+    function showImage(index) {
+      images.forEach((img, i) => {
+        img.classList.toggle('active', i === index);
+      });
+    }
+
+    function nextImage() {
+      currentIndex = (currentIndex + 1) % images.length;
+      showImage(currentIndex);
+    }
+
+    function prevImage() {
+      currentIndex = (currentIndex - 1 + images.length) % images.length;
+      showImage(currentIndex);
+    }
+
+    /* ---------- Quiz JS ---------- */
+    const quizData = [
+      {
+        question: "Which language is used for styling web pages?",
+        options: ["HTML", "CSS", "JavaScript", "Python"],
+        answer: "CSS"
+      },
+      
+      {
+        question: "Which method is used to fetch data from an API?",
+        options: ["getData()", "fetch()", "request()", "apiCall()"],
+        answer: "fetch()"
+      }
+    ];
+
+    const quizContainer = document.getElementById("quiz");
+
+    function loadQuiz() {
+      quizData.forEach((q, index) => {
+        const div = document.createElement("div");
+        div.classList.add("quiz-question");
+        div.innerHTML = `<p>${index + 1}. ${q.question}</p>`;
+        q.options.forEach(option => {
+          div.innerHTML += `
+            <label>
+              <input type="radio" name="q${index}" value="${option}"> ${option}
+            </label><br>
+          `;
+        });
+        quizContainer.appendChild(div);
+      });
+    }
+
+    function submitQuiz() {
+      let score = 0;
+      quizData.forEach((q, index) => {
+        const selected = document.querySelector(`input[name="q${index}"]:checked`);
+        if (selected && selected.value === q.answer) {
+          score++;
+        }
+      });
+      document.getElementById("quiz-result").innerText =
+        `You scored ${score} out of ${quizData.length}`;
+    }
+
+    loadQuiz();
+
+    /* ---------- Fetch API JS ---------- */
+    async function getJoke() {
+      try {
+        const res = await fetch('https://icanhazdadjoke.com/', {
+          headers: { 'Accept': 'application/json' }
+        });
+        const data = await res.json();
+        document.getElementById('joke').innerText = data.joke;
+      } catch (error) {
+        document.getElementById('joke').innerText = 'Failed to load joke.';
+      }
+    }
+  </script>
+
+</body>
+</html>
